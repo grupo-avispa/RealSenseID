@@ -993,12 +993,11 @@ private:
 } // namespace details
 
 SPDLOG_INLINE pattern_formatter::pattern_formatter(
-    std::string pattern, pattern_time_type time_type, std::string eol, custom_flags custom_user_flags)
+    std::string pattern, pattern_time_type time_type, std::string eol)
     : pattern_(std::move(pattern))
     , eol_(std::move(eol))
     , pattern_time_type_(time_type)
     , last_log_secs_(0)
-    , custom_handlers_(std::move(custom_user_flags))
 {
     std::memset(&cached_tm_, 0, sizeof(cached_tm_));
     compile_pattern_(pattern_);
@@ -1017,12 +1016,12 @@ SPDLOG_INLINE pattern_formatter::pattern_formatter(pattern_time_type time_type, 
 
 SPDLOG_INLINE std::unique_ptr<formatter> pattern_formatter::clone() const
 {
-    custom_flags cloned_custom_formatters;
+    /*custom_flags cloned_custom_formatters;
     for (auto &it : custom_handlers_)
     {
         cloned_custom_formatters[it.first] = it.second->clone();
-    }
-    return details::make_unique<pattern_formatter>(pattern_, pattern_time_type_, eol_, std::move(cloned_custom_formatters));
+    }*/
+    return details::make_unique<pattern_formatter>(pattern_, pattern_time_type_, eol_);
 }
 
 SPDLOG_INLINE void pattern_formatter::format(const details::log_msg &msg, memory_buf_t &dest)
@@ -1061,14 +1060,14 @@ template<typename Padder>
 SPDLOG_INLINE void pattern_formatter::handle_flag_(char flag, details::padding_info padding)
 {
     // process custom flags
-    auto it = custom_handlers_.find(flag);
+   /* auto it = custom_handlers_.find(flag);
     if (it != custom_handlers_.end())
     {
         auto custom_handler = it->second->clone();
         custom_handler->set_padding_info(padding);
         formatters_.push_back(std::move(custom_handler));
         return;
-    }
+    }*/
 
     // process built-in flags
     switch (flag)
